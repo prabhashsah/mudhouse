@@ -32,10 +32,11 @@ export default function AboutPage() {
           </div>
           <div className="order-1 md:order-2 relative h-96 rounded-2xl overflow-hidden shadow-lg">
             <Image 
-              src="/images/coffee_shop_interior.png" 
+              src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop" 
               alt="The Mud House origins" 
               fill 
               className="object-cover"
+              sizes="(max-width: 768px) 100vw, 50vw"
             />
           </div>
         </div>

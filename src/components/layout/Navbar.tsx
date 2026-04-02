@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { Search, Menu, X } from "lucide-react";
+import { Search, Menu, X, ShoppingBag } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { useCart } from "@/context/CartContext";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -18,6 +19,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { totalItems } = useCart();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -57,14 +59,22 @@ export default function Navbar() {
 
         {/* Action Buttons */}
         <div className="hidden md:flex items-center space-x-6">
+          <Link href="/cart" className="relative text-brand-900 hover:text-brand-600 transition-colors">
+            <ShoppingBag size={22} />
+            {totalItems > 0 && (
+              <span className="absolute -top-2 -right-2 bg-brand-600 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-sand">
+                {totalItems}
+              </span>
+            )}
+          </Link>
           <button className="text-brand-900 hover:text-brand-600 transition-colors">
-            <Search size={20} />
+            <Search size={22} />
           </button>
           <Link
-            href="/store"
+            href="/admin"
             className="bg-brand-800 hover:bg-brand-900 text-white px-6 py-2 rounded-full text-sm font-medium transition-colors shadow-md hover:shadow-lg"
           >
-            Visit Store
+            Dashboard
           </Link>
         </div>
 
@@ -97,6 +107,18 @@ export default function Navbar() {
               className="bg-brand-800 text-white px-6 py-2 rounded-full font-medium"
             >
               Visit Store
+            </Link>
+            <Link
+              href="/cart"
+              onClick={() => setMobileMenuOpen(false)}
+              className="relative p-2 text-brand-900 rounded-full bg-brand-100"
+            >
+               <ShoppingBag size={20} />
+               {totalItems > 0 && (
+                <span className="absolute -top-1 -right-1 bg-brand-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                  {totalItems}
+                </span>
+              )}
             </Link>
             <button className="p-2 text-brand-900 rounded-full bg-brand-100">
                <Search size={20} />

@@ -1,26 +1,29 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, Search } from "lucide-react";
+import { Heart, Search, Plus, Loader2 } from "lucide-react";
 import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import { db } from "@/services/firebase";
+import { useCart } from "@/context/CartContext";
+import { toast } from "react-hot-toast";
+import SafeImage from "@/components/ui/SafeImage";
 
 // Fallback static data if Firebase is empty/unconfigured
 const FALLBACK_MENU_ITEMS = [
-  { id: "1", name: "Salted Caramel Latte", desc: "Espresso, steamed milk, caramel, sea salt", price: "$5.50", category: "Espresso Drinks", img: "/images/latte_art_1775139905103.png", popular: true },
-  { id: "2", name: "Iced Americano", desc: "Double shot espresso over ice water", price: "$4.00", category: "Iced Coffee", img: "/images/latte_art_1775139905103.png", popular: false },
-  { id: "3", name: "Vanilla Bean Frappe", desc: "Blended vanilla bean with milk and ice", price: "$6.00", category: "Iced Coffee", img: "/images/latte_art_1775139905103.png", popular: true },
-  { id: "4", name: "Strawberry Matcha", desc: "Premium matcha layered with strawberry puree", price: "$6.50", category: "Teas & Refreshers", img: "/images/latte_art_1775139905103.png", popular: false },
-  { id: "5", name: "Chamomile Citrus", desc: "Relaxing herbal tea with lemon hints", price: "$4.50", category: "Teas & Refreshers", img: "/images/latte_art_1775139905103.png", popular: false },
-  { id: "6", name: "Red Velvet Cupcake", desc: "Moist cake with cream cheese frosting", price: "$4.00", category: "Desserts & Bakery", img: "/images/latte_art_1775139905103.png", popular: true },
-  { id: "7", name: "Seasonal Pumpkin Spice", desc: "Fall favorite with cinnamon and nutmeg", price: "$5.75", category: "Seasonal Specials", img: "/images/latte_art_1775139905103.png", popular: true },
+  { id: "1", name: "Salted Caramel Latte", description: "Espresso, steamed milk, caramel, sea salt", price: 5.50, category: "Espresso Drinks", imageUrl: "/images/latte_art_1775139905103.png", popular: true },
+  { id: "2", name: "Iced Americano", description: "Double shot espresso over ice water", price: 4.00, category: "Iced Coffee", imageUrl: "/images/latte_art_1775139905103.png", popular: false },
+  { id: "3", name: "Vanilla Bean Frappe", description: "Blended vanilla bean with milk and ice", price: 6.00, category: "Iced Coffee", imageUrl: "/images/latte_art_1775139905103.png", popular: true },
+  { id: "4", name: "Strawberry Matcha", description: "Premium matcha layered with strawberry puree", price: 6.50, category: "Teas & Refreshers", imageUrl: "/images/latte_art_1775139905103.png", popular: false },
+  { id: "5", name: "Chamomile Citrus", description: "Relaxing herbal tea with lemon hints", price: 4.50, category: "Teas & Refreshers", imageUrl: "/images/latte_art_1775139905103.png", popular: false },
+  { id: "6", name: "Red Velvet Cupcake", description: "Moist cake with cream cheese frosting", price: 4.00, category: "Desserts & Bakery", imageUrl: "/images/latte_art_1775139905103.png", popular: true },
+  { id: "7", name: "Seasonal Pumpkin Spice", description: "Fall favorite with cinnamon and nutmeg", price: 5.75, category: "Seasonal Specials", imageUrl: "/images/latte_art_1775139905103.png", popular: true },
 ];
 
 const MENU_CATEGORIES = ["All", "Espresso Drinks", "Iced Coffee", "Teas & Refreshers", "Desserts & Bakery", "Seasonal Specials"];
 
 export default function MenuPage() {
+  const { addToCart } = useCart();
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [favorites, setFavorites] = useState<Record<string, boolean>>({});
@@ -30,7 +33,7 @@ export default function MenuPage() {
   // Load from Firebase, use fallback if empty or failing
   useEffect(() => {
     try {
-      const q = query(collection(db, "menuItems"), orderBy("name"));
+      const q = query(collection(db, "items"), orderBy("name")); // Using "items" collection
       const unsubscribe = onSnapshot(q, (snapshot) => {
         if (!snapshot.empty) {
           const items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -52,6 +55,19 @@ export default function MenuPage() {
     }
   }, []);
 
+  const handleAddToCart = (item: any, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const cleanPrice = typeof item.price === "string" ? parseFloat(item.price.replace(/[^0-9.]/g, "")) : item.price;
+    addToCart({
+      id: item.id,
+      name: item.name,
+      price: cleanPrice,
+      image: item.imageUrl || "/images/latte_art_1775139905103.png",
+      category: item.category
+    });
+    toast.success(`${item.name} added to cart!`);
+  };
+
   const toggleFavorite = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     setFavorites(prev => ({
@@ -63,7 +79,7 @@ export default function MenuPage() {
   const filteredItems = menuItems.filter(item => {
     const matchesCategory = activeCategory === "All" || item.category === activeCategory;
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                         item.desc.toLowerCase().includes(searchQuery.toLowerCase());
+                         (item.description || "").toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
@@ -115,7 +131,7 @@ export default function MenuPage() {
         {/* Menu Grid */}
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-800"></div>
+            <Loader2 className="animate-spin text-brand-800" size={48} />
           </div>
         ) : (
           <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -128,14 +144,14 @@ export default function MenuPage() {
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.3 }}
                   key={item.id} 
-                  className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 group flex flex-col cursor-pointer relative"
+                  className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 group flex flex-col cursor-pointer relative border border-brand-50"
                 >
                   <div className="relative h-64 w-full overflow-hidden">
-                    <Image 
-                      src={item.img || "/images/latte_art_1775139905103.png"} 
-                      alt={item.name} 
-                      fill 
-                      className="object-cover group-hover:scale-110 transition-transform duration-700"
+                    <SafeImage
+                      src={item.imageUrl}
+                      alt={item.name}
+                      fill
+                      className="group-hover:scale-110 transition-transform duration-700"
                     />
                     <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
                     
@@ -147,22 +163,35 @@ export default function MenuPage() {
                     )}
                     
                     {/* Favorite Button */}
-                    <button 
-                      onClick={(e) => toggleFavorite(item.id, e)}
-                      className="absolute top-4 right-4 p-2 bg-white/80 hover:bg-white backdrop-blur-sm rounded-full shadow-md transition-all group-hover:scale-110 z-10"
-                    >
-                      <Heart 
-                        size={20} 
-                        className={favorites[item.id] ? "fill-red-500 text-red-500" : "text-brand-600"} 
-                      />
-                    </button>
+                    <div className="absolute top-4 right-4 flex flex-col gap-2 z-10">
+                      <button 
+                        onClick={(e) => toggleFavorite(item.id, e)}
+                        className="p-2 bg-white/90 hover:bg-white backdrop-blur-sm rounded-full shadow-md transition-all hover:scale-110"
+                        title="Add to Favorites"
+                      >
+                        <Heart 
+                          size={18} 
+                          className={favorites[item.id] ? "fill-red-500 text-red-500" : "text-brand-600"} 
+                        />
+                      </button>
+                    </div>
                   </div>
                   <div className="p-6 flex flex-col flex-grow">
-                    <div className="flex justify-between items-start mb-2 gap-4">
+                    <div className="flex justify-between items-start mb-3 gap-4">
                       <h3 className="text-xl font-bold text-brand-950 leading-tight group-hover:text-brand-700 transition-colors">{item.name}</h3>
-                      <span className="text-brand-700 font-semibold text-lg">{item.price}</span>
+                      <span className="text-brand-700 font-bold text-lg">
+                        ${typeof item.price === "number" ? item.price.toFixed(2) : item.price}
+                      </span>
                     </div>
-                    <p className="text-brand-600 text-sm mt-auto pt-4 leading-relaxed">{item.desc}</p>
+                    <p className="text-brand-600 text-sm mb-6 leading-relaxed line-clamp-2">{item.description || item.desc}</p>
+                    
+                    <button 
+                      onClick={(e) => handleAddToCart(item, e)}
+                      className="mt-auto w-full bg-brand-950 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-brand-800 transition-all active:scale-95 shadow-lg group-hover:shadow-brand-900/10"
+                    >
+                      <Plus size={18} />
+                      Order Now
+                    </button>
                   </div>
                 </motion.div>
               ))}

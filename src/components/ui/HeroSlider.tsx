@@ -56,6 +56,7 @@ export default function HeroSlider() {
             fill
             className="object-cover brightness-[0.4]"
             priority
+            sizes="100vw"
           />
         </motion.div>
       </AnimatePresence>

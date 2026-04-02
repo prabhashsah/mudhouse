@@ -65,7 +65,7 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="relative h-[500px] rounded-3xl overflow-hidden hidden lg:block">
                <Image 
-                  src="/images/coffee_shop_interior.png" 
+                  src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80" 
                   alt="Coffee Shop Interior" 
                   fill 
                   className="object-cover hover:scale-105 transition-transform duration-1000"
