@@ -1,65 +1,128 @@
 import Image from "next/image";
+import Link from "next/link";
+import { Coffee, Heart, CakeSlice, Smile } from "lucide-react";
+import HeroSlider from "@/components/ui/HeroSlider";
+import ReviewSlider from "@/components/ui/ReviewSlider";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="flex flex-col w-full pb-20">
+      <HeroSlider />
+
+      {/* Feature Highlights */}
+      <section className="py-24 bg-sand">
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { icon: Coffee, title: "Freshly Brewed", desc: "Crafted to perfection daily" },
+              { icon: Heart, title: "Cozy Atmosphere", desc: "A place to unwind & connect" },
+              { icon: CakeSlice, title: "Handmade Desserts", desc: "Baked with love & care" },
+              { icon: Smile, title: "Friendly Service", desc: "Served with a warm smile" }
+            ].map((feature, i) => (
+              <div 
+                key={i}
+                className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all flex flex-col items-center text-center group animate-fade-in-up"
+                style={{ animationDelay: `${i * 100}ms` }}
+              >
+                <div className="w-16 h-16 bg-brand-100 text-brand-700 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <feature.icon size={32} />
+                </div>
+                <h3 className="text-xl font-bold text-brand-900 mb-2">{feature.title}</h3>
+                <p className="text-brand-700">{feature.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Popular Items */}
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-brand-950 mb-4">Popular Delights</h2>
+            <p className="text-brand-700 text-lg max-w-2xl mx-auto">Discover our most loved creations, crafted with passion and the finest ingredients.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { name: "Salted Caramel Latte", img: "/images/latte_art.png", price: "$5.50" },
+              { name: "Strawberry Matcha", img: "/images/latte_art.png", price: "$6.00" },
+              { name: "Red Velvet Cupcake", img: "/images/latte_art.png", price: "$4.00" },
+              { name: "Java Chip Frappe", img: "/images/latte_art.png", price: "$6.50" }
+            ].map((item, i) => (
+              <Link href="/menu" key={i}>
+                <div className="bg-sand rounded-2xl overflow-hidden cursor-pointer group shadow-sm hover:shadow-2xl transition-all h-full flex flex-col">
+                  <div className="relative h-64 overflow-hidden">
+                    <Image 
+                      src={item.img} 
+                      alt={item.name} 
+                      fill 
+                      className="object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                  </div>
+                  <div className="p-6 flex justify-between items-end flex-grow bg-white">
+                    <div>
+                      <h3 className="text-xl font-bold text-brand-950 mb-1">{item.name}</h3>
+                      <p className="text-brand-600 font-medium">View in Menu →</p>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* About Preview */}
+      <section className="py-24 bg-brand-950 text-white">
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div className="relative h-[500px] rounded-3xl overflow-hidden hidden lg:block">
+               <Image 
+                  src="/images/coffee_shop_interior.png" 
+                  alt="Coffee Shop Interior" 
+                  fill 
+                  className="object-cover hover:scale-105 transition-transform duration-1000"
+                />
+            </div>
+            <div className="flex flex-col items-start lg:pl-8">
+              <h2 className="text-4xl md:text-5xl font-bold mb-6">More Than Just a Cup of Coffee</h2>
+              <p className="text-brand-200 text-lg mb-8 leading-relaxed">
+                The Mud House was born out of a simple love for community and quality coffee. We believe that a coffee shop should be a sanctuary—a place where you can pause, connect, and enjoy the finer, simpler things in life. Our beans are ethically sourced and roasted to perfection.
+              </p>
+              <Link 
+                href="/about" 
+                className="bg-white text-brand-950 px-8 py-3 rounded-full font-medium hover:bg-brand-100 transition-colors"
+               >
+                Learn Our Story
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Reviews */}
+      <ReviewSlider />
+
+      {/* CTA Section */}
+      <section className="py-32 bg-brand-100 relative overflow-hidden flex items-center justify-center text-center">
+        <div className="relative z-10 max-w-3xl mx-auto px-6">
+          <h2 className="text-5xl md:text-6xl font-bold text-brand-950 mb-8">
+            Craving a Good Time?
+          </h2>
+          <p className="text-xl text-brand-700 mb-10">
+            Visit our cafe today and experience the warmth for yourself.
           </p>
+          <div>
+            <Link 
+                href="/store" 
+                className="inline-block bg-brand-800 text-white px-10 py-5 rounded-full text-xl font-medium hover:bg-brand-900 transition-colors shadow-lg"
+              >
+                Find Our Store
+            </Link>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      </section>
     </div>
   );
 }
