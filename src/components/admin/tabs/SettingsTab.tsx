@@ -34,11 +34,23 @@ export default function SettingsTab() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
+    
+    // Add a timeout warning for propagation delay
+    const timeout = setTimeout(() => {
+      toast("Still saving... Firestore might still be connecting. If this takes too long, please refresh the page.", {
+        icon: "⏳",
+        duration: 6000
+      });
+    }, 5000);
+
     try {
       await setContactSettings(settings);
+      clearTimeout(timeout);
       toast.success("Settings updated successfully!");
-    } catch (error) {
-      toast.error("Failed to update settings");
+    } catch (error: any) {
+      clearTimeout(timeout);
+      console.error("Save error:", error);
+      toast.error(`Failed to update settings: ${error.message || "Unknown error"}`);
     } finally {
       setSaving(false);
     }

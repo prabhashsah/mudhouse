@@ -11,12 +11,12 @@ export interface ContactSettings {
 }
 
 const DEFAULT_CONTACT_SETTINGS: ContactSettings = {
-  email: "info@fake-themudhouse.com",
-  phone: "+977 0000000000",
-  address: "123 Fake Street, Sanctuary City",
-  whatsapp: "9770000000000",
-  locationUrl: "https://maps.google.com/?q=fake+location",
-  openingHours: "09:00 AM - 09:00 PM"
+  email: "hello@themudhouse.com",
+  phone: "+977 9702032444",
+  address: "Baluwatar, Kathmandu, Nepal",
+  whatsapp: "9779702032444",
+  locationUrl: "https://maps.google.com/?q=Baluwatar,Kathmandu,Nepal",
+  openingHours: "07:00 AM - 10:00 PM"
 };
 
 const SETTINGS_COLLECTION = "site_settings";

@@ -6,11 +6,23 @@ import { db } from "@/services/firebase";
 import { collection, addDoc, serverTimestamp, query, orderBy, onSnapshot } from "firebase/firestore";
 import { toast } from "react-hot-toast";
 
+import { getPageContent } from "@/services/content";
+
+const DEFAULT_REVIEWS_CONTENT = {
+  title: "What Our Guests Say"
+};
+
 export default function ReviewsPage() {
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [content, setContent] = useState(DEFAULT_REVIEWS_CONTENT);
   
+  // Load page content
+  useEffect(() => {
+    getPageContent("reviews", DEFAULT_REVIEWS_CONTENT).then(setContent);
+  }, []);
+
   // Form state
   const [rating, setRating] = useState(5);
   const [name, setName] = useState("");
@@ -64,7 +76,7 @@ export default function ReviewsPage() {
           
           {/* Reviews Summary List */}
           <div className="lg:col-span-7">
-            <h1 className="text-4xl md:text-5xl font-bold text-brand-950 mb-2">What Our Guests Say</h1>
+            <h1 className="text-4xl md:text-5xl font-bold text-brand-950 mb-2">{content.title}</h1>
             <div className="flex items-center gap-4 mb-12">
               <div className="flex text-brand-500">
                 {[...Array(5)].map((_, i) => (

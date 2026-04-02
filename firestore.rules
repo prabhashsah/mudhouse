@@ -43,5 +43,11 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isAdmin();
     }
+
+    // Page Content
+    match /page_content/{pageId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
   }
 }

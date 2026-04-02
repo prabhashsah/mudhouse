@@ -12,11 +12,12 @@ import MessagesTab from "@/components/admin/tabs/MessagesTab";
 import SubscribersTab from "@/components/admin/tabs/SubscribersTab";
 import ReviewsTab from "@/components/admin/tabs/ReviewsTab";
 import SettingsTab from "@/components/admin/tabs/SettingsTab";
-import { Settings } from "lucide-react";
+import ContentEditorTab from "@/components/admin/tabs/ContentEditorTab";
+import { Settings, FileText } from "lucide-react";
 
 const ADMIN_EMAIL = "sahprabhas293@gmail.com";
 
-type AdminTab = "products" | "orders" | "messages" | "subscribers" | "reviews" | "settings";
+type AdminTab = "products" | "orders" | "messages" | "subscribers" | "reviews" | "content" | "settings";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -58,6 +59,7 @@ export default function AdminDashboard() {
     { id: "messages", label: "Customer Messages", icon: MessageSquare },
     { id: "subscribers", label: "Newsletter List", icon: Users },
     { id: "reviews", label: "User Reviews", icon: Star },
+    { id: "content", label: "Page Content", icon: FileText },
     { id: "settings", label: "Site Settings", icon: Settings },
   ];
 
@@ -116,6 +118,7 @@ export default function AdminDashboard() {
             {activeTab === "messages" && <MessagesTab />}
             {activeTab === "subscribers" && <SubscribersTab />}
             {activeTab === "reviews" && <ReviewsTab />}
+            {activeTab === "content" && <ContentEditorTab />}
             {activeTab === "settings" && <SettingsTab />}
           </div>
         </div>

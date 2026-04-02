@@ -6,8 +6,14 @@ import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import { db } from "@/services/firebase";
+import { getPageContent } from "@/services/content";
 
 const GALLERY_CATEGORIES = ["All", "Drinks", "Interior", "Food", "Vibes"];
+
+const DEFAULT_GALLERY_CONTENT = {
+  title: "Our Gallery",
+  description: "A glimpse into the daily life, beautiful creations, and cozy corners of The Mud House."
+};
 
 const FALLBACK_GALLERY_IMAGES = [
   { id: "1", src: "/images/latte_art_1775139905103.png", category: "Drinks", alt: "Latte Art" },
@@ -20,6 +26,11 @@ export default function GalleryPage() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [images, setImages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [content, setContent] = useState(DEFAULT_GALLERY_CONTENT);
+
+  useEffect(() => {
+    getPageContent("gallery", DEFAULT_GALLERY_CONTENT).then(setContent);
+  }, []);
 
   useEffect(() => {
     try {
@@ -64,9 +75,9 @@ export default function GalleryPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-16"
         >
-          <h1 className="text-5xl font-bold text-brand-950 mb-6">Our Gallery</h1>
+          <h1 className="text-5xl font-bold text-brand-950 mb-6">{content.title}</h1>
           <p className="text-lg text-brand-700 max-w-2xl mx-auto">
-            A glimpse into the daily life, beautiful creations, and cozy corners of The Mud House.
+            {content.description}
           </p>
         </motion.div>
 

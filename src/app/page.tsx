@@ -10,7 +10,26 @@ export const metadata = {
   description: "Best coffee shop with organic coffee, handmade desserts, and a cozy environment."
 };
 
-export default function Home() {
+import { getPageContent } from "@/services/content";
+
+const DEFAULT_HOME_CONTENT = {
+  features: [
+    { title: "Freshly Brewed", desc: "Crafted to perfection daily" },
+    { title: "Cozy Atmosphere", desc: "A place to unwind & connect" },
+    { title: "Handmade Desserts", desc: "Baked with love & care" },
+    { title: "Friendly Service", desc: "Served with a warm smile" }
+  ],
+  popularTitle: "Popular Delights",
+  popularDesc: "Discover our most loved creations, crafted with passion and the finest ingredients.",
+  aboutTitle: "More Than Just a Cup of Coffee",
+  aboutText: "The Mud House was born out of a simple love for community and quality coffee. We believe that a coffee shop should be a sanctuary—a place where you can pause, connect, and enjoy the finer, simpler things in life. Our beans are ethically sourced and roasted to perfection.",
+  ctaTitle: "Craving a Good Time?",
+  ctaDesc: "Visit our cafe today and experience the warmth for yourself."
+};
+
+export default async function Home() {
+  const content = await getPageContent("home", DEFAULT_HOME_CONTENT);
+
   return (
     <div className="flex flex-col w-full pb-20">
       <HeroSlider />
@@ -19,24 +38,23 @@ export default function Home() {
       <section className="py-24 bg-sand">
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { icon: Coffee, title: "Freshly Brewed", desc: "Crafted to perfection daily" },
-              { icon: Heart, title: "Cozy Atmosphere", desc: "A place to unwind & connect" },
-              { icon: CakeSlice, title: "Handmade Desserts", desc: "Baked with love & care" },
-              { icon: Smile, title: "Friendly Service", desc: "Served with a warm smile" }
-            ].map((feature, i) => (
-              <div 
-                key={i}
-                className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all flex flex-col items-center text-center group animate-fade-in-up"
-                style={{ animationDelay: `${i * 100}ms` }}
-              >
-                <div className="w-16 h-16 bg-brand-100 text-brand-700 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <feature.icon size={32} />
+            {content.features.map((feature: any, i: number) => {
+              const icons = [Coffee, Heart, CakeSlice, Smile];
+              const Icon = icons[i] || Coffee;
+              return (
+                <div 
+                  key={i}
+                  className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all flex flex-col items-center text-center group animate-fade-in-up"
+                  style={{ animationDelay: `${i * 100}ms` }}
+                >
+                  <div className="w-16 h-16 bg-brand-100 text-brand-700 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                    <Icon size={32} />
+                  </div>
+                  <h3 className="text-xl font-bold text-brand-900 mb-2">{feature.title}</h3>
+                  <p className="text-brand-700">{feature.desc}</p>
                 </div>
-                <h3 className="text-xl font-bold text-brand-900 mb-2">{feature.title}</h3>
-                <p className="text-brand-700">{feature.desc}</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -45,8 +63,8 @@ export default function Home() {
       <section className="py-24 bg-white">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-brand-950 mb-4">Popular Delights</h2>
-            <p className="text-brand-700 text-lg max-w-2xl mx-auto">Discover our most loved creations, crafted with passion and the finest ingredients.</p>
+            <h2 className="text-4xl md:text-5xl font-bold text-brand-950 mb-4">{content.popularTitle}</h2>
+            <p className="text-brand-700 text-lg max-w-2xl mx-auto">{content.popularDesc}</p>
           </div>
 
           <PopularItems />
@@ -72,9 +90,9 @@ export default function Home() {
                 />
             </div>
             <div className="flex flex-col items-start lg:pl-8">
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">More Than Just a Cup of Coffee</h2>
+              <h2 className="text-4xl md:text-5xl font-bold mb-6">{content.aboutTitle}</h2>
               <p className="text-brand-200 text-lg mb-8 leading-relaxed">
-                The Mud House was born out of a simple love for community and quality coffee. We believe that a coffee shop should be a sanctuary—a place where you can pause, connect, and enjoy the finer, simpler things in life. Our beans are ethically sourced and roasted to perfection.
+                {content.aboutText}
               </p>
               <Link 
                 href="/about" 
@@ -94,10 +112,10 @@ export default function Home() {
       <section className="py-32 bg-brand-100 relative overflow-hidden flex items-center justify-center text-center">
         <div className="relative z-10 max-w-3xl mx-auto px-6">
           <h2 className="text-5xl md:text-6xl font-bold text-brand-950 mb-8">
-            Craving a Good Time?
+            {content.ctaTitle}
           </h2>
           <p className="text-xl text-brand-700 mb-10">
-            Visit our cafe today and experience the warmth for yourself.
+            {content.ctaDesc}
           </p>
           <div>
             <Link 

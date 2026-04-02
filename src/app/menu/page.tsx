@@ -20,7 +20,14 @@ const FALLBACK_MENU_ITEMS = [
   { id: "7", name: "Seasonal Pumpkin Spice", description: "Fall favorite with cinnamon and nutmeg", price: 5.75, category: "Seasonal Specials", imageUrl: "/images/latte_art_1775139905103.png", popular: true },
 ];
 
+import { getPageContent } from "@/services/content";
+
 const MENU_CATEGORIES = ["All", "Espresso Drinks", "Iced Coffee", "Teas & Refreshers", "Desserts & Bakery", "Seasonal Specials"];
+
+const DEFAULT_MENU_CONTENT = {
+  title: "Our Menu",
+  description: "Carefully crafted drinks and handmade treats made from the finest ingredients."
+};
 
 export default function MenuPage() {
   const { addToCart } = useCart();
@@ -29,6 +36,12 @@ export default function MenuPage() {
   const [favorites, setFavorites] = useState<Record<string, boolean>>({});
   const [menuItems, setMenuItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [content, setContent] = useState(DEFAULT_MENU_CONTENT);
+
+  // Load page content
+  useEffect(() => {
+    getPageContent("menu", DEFAULT_MENU_CONTENT).then(setContent);
+  }, []);
 
   // Load from Firebase, use fallback if empty or failing
   useEffect(() => {
@@ -92,9 +105,9 @@ export default function MenuPage() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h1 className="text-5xl font-bold text-brand-950 mb-6">Our Menu</h1>
+          <h1 className="text-5xl font-bold text-brand-950 mb-6">{content.title}</h1>
           <p className="text-lg text-brand-700 max-w-2xl mx-auto">
-            Carefully crafted drinks and handmade treats made from the finest ingredients.
+            {content.description}
           </p>
         </motion.div>
 
