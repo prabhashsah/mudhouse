@@ -3,6 +3,12 @@ import Link from "next/link";
 import { Coffee, Heart, CakeSlice, Smile } from "lucide-react";
 import HeroSlider from "@/components/ui/HeroSlider";
 import ReviewSlider from "@/components/ui/ReviewSlider";
+import PopularItems from "@/components/ui/PopularItems";
+
+export const metadata = {
+  title: "The Mud House | Premium Coffee",
+  description: "Best coffee shop with organic coffee, handmade desserts, and a cozy environment."
+};
 
 export default function Home() {
   return (
@@ -43,32 +49,12 @@ export default function Home() {
             <p className="text-brand-700 text-lg max-w-2xl mx-auto">Discover our most loved creations, crafted with passion and the finest ingredients.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { name: "Salted Caramel Latte", img: "/images/latte_art.png", price: "$5.50" },
-              { name: "Strawberry Matcha", img: "/images/latte_art.png", price: "$6.00" },
-              { name: "Red Velvet Cupcake", img: "/images/latte_art.png", price: "$4.00" },
-              { name: "Java Chip Frappe", img: "/images/latte_art.png", price: "$6.50" }
-            ].map((item, i) => (
-              <Link href="/menu" key={i}>
-                <div className="bg-sand rounded-2xl overflow-hidden cursor-pointer group shadow-sm hover:shadow-2xl transition-all h-full flex flex-col">
-                  <div className="relative h-64 overflow-hidden">
-                    <Image 
-                      src={item.img} 
-                      alt={item.name} 
-                      fill 
-                      className="object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                  </div>
-                  <div className="p-6 flex justify-between items-end flex-grow bg-white">
-                    <div>
-                      <h3 className="text-xl font-bold text-brand-950 mb-1">{item.name}</h3>
-                      <p className="text-brand-600 font-medium">View in Menu →</p>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
+          <PopularItems />
+          
+          <div className="mt-12 text-center">
+             <Link href="/menu" className="inline-block border-2 border-brand-800 text-brand-800 px-8 py-3 rounded-full font-medium hover:bg-brand-50 transition-colors">
+                Explore Full Menu
+             </Link>
           </div>
         </div>
       </section>

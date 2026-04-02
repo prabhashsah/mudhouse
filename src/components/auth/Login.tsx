@@ -11,6 +11,8 @@ export default function Login({ onToggleMode }: { onToggleMode: () => void }) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  const adminEmail = "sahprabhas293@gmail.com";
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -22,13 +24,16 @@ export default function Login({ onToggleMode }: { onToggleMode: () => void }) {
 
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      console.log("Logged in successfully!", userCredential.user);
-      
+      console.log("Logged in successfully!", userCredential.user.email);
       setSuccess("Logged in successfully!");
-      // We don't usually clear inputs on successful login if it redirects,
-      // but keeping it as requested.
-      setEmail("");
-      setPassword("");
+      
+      console.log("Redirect happening...");
+      if (userCredential.user.email === adminEmail) {
+        window.location.href = "/admin";
+      } else {
+        window.location.href = "/";
+      }
+
     } catch (err: any) {
       console.error("Firebase Login Error:", err.code, err.message);
       if (err.code === "auth/invalid-credential" || err.code === "auth/wrong-password" || err.code === "auth/user-not-found") {
@@ -36,7 +41,6 @@ export default function Login({ onToggleMode }: { onToggleMode: () => void }) {
       } else {
         setError(err.message || "Failed to log in.");
       }
-    } finally {
       setLoading(false);
     }
   };
