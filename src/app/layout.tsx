@@ -46,11 +46,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+import { getContactSettings } from "@/services/settings";
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await getContactSettings();
+
   return (
     <html lang="en" className={`${outfit.variable}`}>
       <body className="flex flex-col min-h-screen bg-sand text-brand-950 font-sans selection:bg-brand-800 selection:text-white">
@@ -65,10 +69,10 @@ export default function RootLayout({
                 "image": "https://themudhouse.com/images/hero-1.jpg",
                 "@id": "https://themudhouse.com",
                 "url": "https://themudhouse.com",
-                "telephone": "+977 9702032444",
+                "telephone": settings.phone,
                 "address": {
                   "@type": "PostalAddress",
-                  "streetAddress": "34 E Garden Ave",
+                  "streetAddress": settings.address,
                   "addressLocality": "Porterville",
                   "addressRegion": "CA",
                   "postalCode": "93257",

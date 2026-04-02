@@ -3,7 +3,17 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { db } from "@/services/firebase";
-import { collection, addDoc, serverTimestamp, query, where, getDocs } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, query, where, getDocs, doc, onSnapshot } from "firebase/firestore";
+import type { ContactSettings } from "@/services/settings";
+
+const DEFAULT_SETTINGS: ContactSettings = {
+  email: "hello@themudhouse.com",
+  phone: "+977 9702032444",
+  address: "34 E Garden Ave, Porterville, CA",
+  whatsapp: "9779702032444",
+  locationUrl: "#",
+  openingHours: "07:00 - 22:00"
+};
 
 export default function Footer() {
   const [email, setEmail] = useState("");
@@ -11,9 +21,19 @@ export default function Footer() {
   const [message, setMessage] = useState("");
 
   const [year, setYear] = useState(2026);
+  const [settings, setSettings] = useState<ContactSettings>(DEFAULT_SETTINGS);
 
   useEffect(() => {
     setYear(new Date().getFullYear());
+
+    // Real-time listener for site settings
+    const unsubscribe = onSnapshot(doc(db, "site_settings", "contact"), (doc) => {
+      if (doc.exists()) {
+        setSettings(doc.data() as ContactSettings);
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const handleSubscribe = async (e: React.FormEvent) => {
@@ -87,10 +107,10 @@ export default function Footer() {
           <div>
             <h4 className="text-lg font-semibold mb-6 text-white">Contact Info</h4>
             <ul className="space-y-3 text-sm text-brand-300">
-              <li className="hover:text-white transition-colors cursor-default">34 E Garden Ave, Porterville, CA</li>
-              <li><a href="tel:+9779702032444" className="hover:text-white transition-colors">+977 9702032444</a></li>
-              <li><a href="mailto:hello@themudhouse.com" className="hover:text-white transition-colors">hello@themudhouse.com</a></li>
-              <li><a href="https://wa.me/9779702032444?text=Hello%20I%20want%20to%20know%20about%20your%20coffee" target="_blank" rel="noopener noreferrer" className="text-green-400 hover:text-green-300 transition-colors font-medium">Chat on WhatsApp</a></li>
+              <li className="hover:text-white transition-colors cursor-default">{settings.address}</li>
+              <li><a href={`tel:${settings.phone.replace(/\s+/g, "")}`} className="hover:text-white transition-colors">{settings.phone}</a></li>
+              <li><a href={`mailto:${settings.email}`} className="hover:text-white transition-colors">{settings.email}</a></li>
+              <li><a href={`https://wa.me/${settings.whatsapp.replace(/\+/g, "")}?text=Hello%20I%20want%20to%20know%20about%20your%20coffee`} target="_blank" rel="noopener noreferrer" className="text-green-400 hover:text-green-300 transition-colors font-medium">Chat on WhatsApp</a></li>
             </ul>
           </div>
 

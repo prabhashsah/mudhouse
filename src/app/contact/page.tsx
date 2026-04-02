@@ -2,8 +2,19 @@
 
 import { useState } from "react";
 import { db } from "@/services/firebase";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, doc, onSnapshot } from "firebase/firestore";
 import { Send, Phone, Mail, MapPin } from "lucide-react";
+import { useEffect } from "react";
+import type { ContactSettings } from "@/services/settings";
+
+const DEFAULT_SETTINGS: ContactSettings = {
+  email: "hello@themudhouse.com",
+  phone: "+977 9702032444",
+  address: "34 E Garden Ave, Porterville, CA",
+  whatsapp: "9779702032444",
+  locationUrl: "#",
+  openingHours: "07:00 - 22:00"
+};
 
 export default function ContactPage() {
   const [name, setName] = useState("");
@@ -12,6 +23,18 @@ export default function ContactPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [settings, setSettings] = useState<ContactSettings>(DEFAULT_SETTINGS);
+
+  useEffect(() => {
+    // Real-time listener for site settings
+    const unsubscribe = onSnapshot(doc(db, "site_settings", "contact"), (doc) => {
+      if (doc.exists()) {
+        setSettings(doc.data() as ContactSettings);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,25 +84,25 @@ export default function ContactPage() {
               </div>
               
               <div className="space-y-4">
-                <a href="tel:+9779702032444" className="block bg-white p-6 rounded-2xl shadow-sm border border-brand-100 hover:border-brand-500 transition-colors group">
+                <a href={`tel:${settings.phone.replace(/\s+/g, "")}`} className="block bg-white p-6 rounded-2xl shadow-sm border border-brand-100 hover:border-brand-500 transition-colors group">
                     <div className="flex items-center gap-4">
                       <div className="p-3 bg-brand-50 rounded-xl text-brand-600 group-hover:bg-brand-600 group-hover:text-white transition-colors">
                         <Phone size={20} />
                       </div>
                       <div>
                         <p className="text-xs text-brand-500 font-bold uppercase tracking-wider">Phone</p>
-                        <p className="text-lg font-medium text-brand-900">+977 9702032444</p>
+                        <p className="text-lg font-medium text-brand-900">{settings.phone}</p>
                       </div>
                     </div>
                 </a>
-                <a href="mailto:hello@themudhouse.com" className="block bg-white p-6 rounded-2xl shadow-sm border border-brand-100 hover:border-brand-500 transition-colors group">
+                <a href={`mailto:${settings.email}`} className="block bg-white p-6 rounded-2xl shadow-sm border border-brand-100 hover:border-brand-500 transition-colors group">
                     <div className="flex items-center gap-4">
                       <div className="p-3 bg-brand-50 rounded-xl text-brand-600 group-hover:bg-brand-600 group-hover:text-white transition-colors">
                         <Mail size={20} />
                       </div>
                       <div>
                         <p className="text-xs text-brand-500 font-bold uppercase tracking-wider">Email</p>
-                        <p className="text-lg font-medium text-brand-900">hello@themudhouse.com</p>
+                        <p className="text-lg font-medium text-brand-900">{settings.email}</p>
                       </div>
                     </div>
                 </a>
@@ -90,7 +113,7 @@ export default function ContactPage() {
                       </div>
                       <div>
                         <p className="text-xs text-brand-500 font-bold uppercase tracking-wider">Location</p>
-                        <p className="text-lg font-medium text-brand-900">34 E Garden Ave, CA</p>
+                        <p className="text-lg font-medium text-brand-900">{settings.address}</p>
                       </div>
                     </div>
                 </div>

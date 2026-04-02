@@ -2,9 +2,26 @@
 
 import { MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { db } from "@/services/firebase";
+import { doc, onSnapshot } from "firebase/firestore";
+import type { ContactSettings } from "@/services/settings";
+
+const DEFAULT_WHATSAPP = "9779702032444";
 
 export default function WhatsAppButton() {
-  const whatsappNumber = "9779702032444";
+  const [whatsappNumber, setWhatsappNumber] = useState(DEFAULT_WHATSAPP);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(doc(db, "site_settings", "contact"), (doc) => {
+      if (doc.exists()) {
+        const data = doc.data() as ContactSettings;
+        setWhatsappNumber(data.whatsapp.replace(/\+/g, ""));
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
   const message = encodeURIComponent("Hello, I want to know about your coffee.");
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
 
