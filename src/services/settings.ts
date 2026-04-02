@@ -30,12 +30,13 @@ export const getContactSettings = async (): Promise<ContactSettings> => {
     if (docSnap.exists()) {
       return docSnap.data() as ContactSettings;
     } else {
-      // Initialize with default values if not exists
-      await setContactSettings(DEFAULT_CONTACT_SETTINGS);
+      // Return default values if document doesn't exist
+      // We don't try to setDoc here to avoid build failures if offline
       return DEFAULT_CONTACT_SETTINGS;
     }
   } catch (error) {
-    console.error("Error fetching contact settings:", error);
+    // If it's a build time or offline error, just return defaults quietly
+    console.warn("Using default contact settings (Firestore unreachable)");
     return DEFAULT_CONTACT_SETTINGS;
   }
 };
